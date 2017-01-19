@@ -69,6 +69,7 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     group  => 0,
     mode   => '0755',
   }
+
   file { '/var/lib/prometheus':
     ensure => 'directory',
     owner  => 0,
@@ -130,7 +131,7 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
   fi
   initctl unset-env BACKUP
   unset BACKUP
-'
+',
     post_stop      => '
   goal=$(initctl status $UPSTART_JOB | awk '{print $2}' | cut -d '/' -f 1)
   # only backup on explicit stop action, not crashes and the like

@@ -119,7 +119,9 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     . /etc/profile.d/proxy.sh
   fi
 
-  exec /usr/local/bin/blackbox_exporter -config.file /etc/prometheus/blackbox.yml -log.level info -log.format "logger:syslog?appname=blackbox_exporter&local=7"
+  exec >> /var/log/prometheus.log
+  exec 2>&1
+  exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :81 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://alertmanager.service.consul:9093/alertmanager -web.external-url "http://mon.$(nubis-metadata NUBIS_ENVIRONMENT).$(nubis-region).$(nubis-metadata NUBIS_ACCOUNT).$(nubis-metadata NUBIS_DOMAIN)/prometheus"
 ',
     pre_start      => '
   if [ "$BACKUP" != "SKIP" ]; then
@@ -133,7 +135,7 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
   unset BACKUP
 ',
     post_stop      => '
-  goal=$(initctl status $UPSTART_JOB | awk '{print $2}' | cut -d '/' -f 1)
+  goal=$(initctl status $UPSTART_JOB | awk \'{print $2}\' | cut -d \'/\' -f 1)
   # only backup on explicit stop action, not crashes and the like
   if [ "$goal" = "stop" ]; then
     if [ "$BACKUP" != "SKIP" ]; then

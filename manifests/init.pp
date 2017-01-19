@@ -153,9 +153,7 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
   initctl unset-env BACKUP
   unset BACKUP
 ',
-  post_start       => '
-initctl set-env SLEEP_TIME=1
-'
+    post_start       => 'initctl set-env SLEEP_TIME=1',
   }
 
   upstart::job { 'blackbox':
@@ -191,6 +189,6 @@ if [ $goal != "stop" ]; then
     initctl set-env SLEEP_TIME=$NEW_SLEEP_TIME
 fi
 ',
+    post_start       => 'initctl set-env SLEEP_TIME=1',
   }
-
 }

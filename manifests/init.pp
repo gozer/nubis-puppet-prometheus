@@ -78,13 +78,7 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     mode   => '0755',
   }
   
-  file { '/usr/local/bin/nubis-prometheus-backup':
-    ensure => file,
-    owner  => root,
-    group  => root,
-    mode   => '0755',
-    source => "puppet:///modules/${module_name}/backup",
-  }
+  include nubis_prometheus::backup
 
   notice ("Grabbing prometheus ${version}")
   staging::file { "prometheus.${version}.tar.gz":

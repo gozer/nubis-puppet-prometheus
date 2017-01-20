@@ -44,10 +44,6 @@ cron::daily { 'prometheus-backup-cleanup':
 }
 
 # Duplicity and Duply
-
-class { 'apt':
-}
-
 apt::ppa {
   'ppa:duplicity-team/ppa':
 }

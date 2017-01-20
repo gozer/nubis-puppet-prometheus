@@ -98,6 +98,14 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     creates => '/usr/local/bin/blackbox_exporter',
   }
 
+  file { '/etc/consul/svc-prometheus.json':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    mode    => '0644',
+    content => template("${module_name}/svc-prometheus.json.tmpl"),
+  }
+
   file { '/etc/confd/conf.d/prometheus.toml':
     ensure  => file,
     owner   => root,

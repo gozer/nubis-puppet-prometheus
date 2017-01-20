@@ -124,6 +124,22 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
   }
 
 
+  file { '/etc/confd/conf.d/blackbox.toml':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    mode    => '0644',
+    content => template("${module_name}/blackbox.toml.tmpl"),
+  }
+
+  file { '/etc/confd/templates/blackbox.yml.tmpl':
+    ensure  => file,
+    owner   => root,
+    group   => root,
+    mode    => '0644',
+    content => template("${module_name}/blackbox.yml.tmpl.tmpl"),
+  }
+
   include 'upstart'
 
   upstart::job { 'prometheus':

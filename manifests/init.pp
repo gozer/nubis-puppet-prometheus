@@ -78,7 +78,9 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     mode   => '0755',
   }
   
-  include nubis_prometheus::backup
+  class { 'nubis_prometheus::backup':
+    project => $project,
+  }
 
   notice ("Grabbing prometheus ${version}")
   staging::file { "prometheus.${version}.tar.gz":

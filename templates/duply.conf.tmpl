@@ -1,0 +1,6 @@
+GPG_KEY="disabled"
+TARGET="s3://s3-$(nubis-region).amazonaws.com/$(nubis-metadata NUBIS_PROMETHEUS_BUCKET)"
+SOURCE="/var/lib/prometheus"
+MAX_AGE=<%= @max_age %>
+MAX_FULLBKP_AGE=<%= @max_full_age %>
+DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE "

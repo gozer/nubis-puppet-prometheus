@@ -42,7 +42,7 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
-class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_name='monitoring', $project=undef) {
+class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_name='monitoring', $project=undef, $rules_dir) {
   if (!$project) {
     $project = $::project_name
   }
@@ -62,12 +62,13 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     owner  => 0,
     group  => 0,
     mode   => '0755',
-  }->
-  file { '/etc/prometheus/rules.d':
+  }->file { '/etc/prometheus/rules.d':
     ensure => 'directory',
     owner  => 0,
     group  => 0,
     mode   => '0755',
+    recurse => true,
+    source  => $rules_dir
   }
 
   file { '/var/lib/prometheus':

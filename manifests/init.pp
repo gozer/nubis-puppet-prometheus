@@ -69,6 +69,11 @@ class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_nam
     mode   => '0755',
     recurse => true,
     source  => $rules_dir
+  }->file { '/etc/prometheus/config.d':
+    ensure => 'directory',
+    owner  => 0,
+    group  => 0,
+    mode   => '0755',
   }
 
   file { '/var/lib/prometheus':

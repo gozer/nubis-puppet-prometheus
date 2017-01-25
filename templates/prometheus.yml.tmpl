@@ -16,6 +16,9 @@ global:
     region: '{{ getv "/config/RegionName" }}'
 {{end}}
 
+files:
+  - "/etc/prometheus/config.d/*.yaml"
+
 rule_files:
   - "/etc/prometheus/rules.d/*.prom"
 

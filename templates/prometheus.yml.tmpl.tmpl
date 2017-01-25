@@ -16,10 +16,6 @@ global:
     region: '{{ getv "/config/RegionName" }}'
 {{end}}
 
-files:
-  - "/etc/prometheus/config.d/*.yaml"
-  - "/etc/prometheus/config.d/*.json"
-
 rule_files:
   - "/etc/prometheus/rules.d/*.prom"
 
@@ -28,3 +24,18 @@ scrape_configs:
     metrics_path: '/prometheus/metrics'
     static_configs:
       - targets: ['localhost:81']
+{{ range $dir := lsdir "/config/federate" }}
+  - job_name: 'federate-{{ $dir }}'
+    honor_labels: true
+    metrics_path: '/prometheus/federate'
+    scheme: 'https'
+    proxy_url: "http://proxy.service.consul:3128"
+    basic_auth:
+      username: "federation"
+      password: "{{ getv (print "/config/federate/" $dir "/password") }}"
+    params:
+      'match[]':
+        - '{job=~"[a-z].*"}'
+    static_configs:
+      - targets:{{ range $region := jsonArray (getv (print "/config/federate/" $dir "/regions")) }}{{ range $environment := jsonArray (getv (print "/config/federate/" $dir "/environments")) }}
+        - 'mon.{{ $environment }}.{{ $region }}.{{ $dir }}.nubis.allizom.org'{{ end }}{{ end }}{{end}}

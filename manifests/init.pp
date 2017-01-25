@@ -43,9 +43,14 @@
 # Copyright 2017 Your name here, unless otherwise noted.
 #
 class nubis_prometheus($version = '1.4.1', $blackbox_version = '0.3.0', $tag_name='monitoring', $project=undef, $rules_dir) {
-  if (!$project) {
-    $project = $::project_name
+
+  if ($project) {
+    $prometheus_project = $project
   }
+  else {
+    $prometheus_project = $::project_name
+  }
+
 
   $prometheus_url = "https://github.com/prometheus/prometheus/releases/download/v${version}/prometheus-${version}.linux-amd64.tar.gz"
   $blackbox_url = "https://github.com/prometheus/blackbox_exporter/releases/download/v${blackbox_version}/blackbox_exporter-${blackbox_version}.linux-amd64.tar.gz"

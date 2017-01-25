@@ -1,9 +1,8 @@
 {
   "service": {
-    "name": "<%= @project %>-prometheus",
+    "name": "<%= @prometheus_project %>-prometheus",
     "port": 81,
     "tags": [
-      "<%= @project %>",
       "traefik.tags=<%= @tag_name %>",
       "traefik.frontend.rule=PathPrefix:/prometheus"
     ],

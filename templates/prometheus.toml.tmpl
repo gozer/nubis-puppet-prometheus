@@ -1,7 +1,7 @@
 [template]
 src = "prometheus.yml.tmpl"
 dest = "/etc/prometheus/config.yml"
-prefix = "/<%= @project %>-%%PROJECT%%/%%ENVIRONMENT%%"
+prefix = "/%%PROJECT%%/%%ENVIRONMENT%%/prometheus"
 
 uid = 0
 gid = 0

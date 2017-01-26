@@ -1,5 +1,9 @@
 GPG_KEY="disabled"
-TARGET="s3://s3-$(nubis-region).amazonaws.com/$(nubis-metadata NUBIS_PROMETHEUS_BUCKET)"
+{{if exists "/config/BackupBucket"}}
+TARGET="s3://s3-$(nubis-region).amazonaws.com/{{ getv "/config/BackupBucket" }}"
+{{else}}
+TARGET="file:///tmp/duply-local"
+{{end}}
 SOURCE="/var/lib/prometheus"
 MAX_AGE=<%= @max_age %>
 MAX_FULLBKP_AGE=<%= @max_full_age %>

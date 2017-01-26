@@ -2,7 +2,7 @@ class nubis_prometheus::backup($project,
   $duplicity_version = '0.7.11-0ubuntu0ppa1263~ubuntu14.04.1',
   $duply_version = '2.0.1',
   $boto_version  = '2.20.1-2ubuntu2',
-  
+
   $max_age = '3M',
   $max_full_age = '1D',
   ) {
@@ -89,22 +89,20 @@ file { '/etc/duply/prometheus/exclude':
   content => '- /var/lib/prometheus/PRISTINE',
 }
 
-file { '/etc/duply/prometheus/conf':
-  ensure  => 'present',
-  owner   => 'root',
-  group   => 'root',
-  mode    => '0600',
-  require => [
-    File['/etc/duply/prometheus'],
-  ],
-  content => '
-GPG_KEY="disabled"
-TARGET="s3://s3-$(nubis-region).amazonaws.com/$(nubis-metadata NUBIS_PROMETHEUS_BUCKET)"
-SOURCE="/var/lib/prometheus"
-MAX_AGE=3M
-MAX_FULLBKP_AGE=1D
-DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE "
-',
-  }
+file { '/etc/confd/conf.d/duply.toml':
+  ensure  => file,
+  owner   => root,
+  group   => root,
+  mode    => '0644',
+  content => template("${module_name}/duply.toml.tmpl"),
+}
+
+file { '/etc/confd/templates/duply.tmpl':
+  ensure  => file,
+  owner   => root,
+  group   => root,
+  mode    => '0644',
+  content => template("${module_name}/duply.conf.tmpl"),
+}
 
 }

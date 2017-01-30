@@ -68,10 +68,10 @@ class nubis_prometheus($version = '1.5.0', $blackbox_version = '0.4.0', $tag_nam
     group  => 0,
     mode   => '0755',
   }->file { '/etc/prometheus/rules.d':
-    ensure => 'directory',
-    owner  => 0,
-    group  => 0,
-    mode   => '0755',
+    ensure  => 'directory',
+    owner   => 0,
+    group   => 0,
+    mode    => '0755',
     recurse => true,
     source  => $rules_dir
   }->file { '/etc/prometheus/config.d':
@@ -87,7 +87,7 @@ class nubis_prometheus($version = '1.5.0', $blackbox_version = '0.4.0', $tag_nam
     group  => 0,
     mode   => '0755',
   }
-  
+
   class { 'nubis_prometheus::backup':
     project => $project,
   }
@@ -169,16 +169,16 @@ class nubis_prometheus($version = '1.5.0', $blackbox_version = '0.4.0', $tag_nam
     },
     user           => 'root',
     group          => 'root',
-    script         => '
+    script         => "
   if [ -r /etc/profile.d/proxy.sh ]; then
-    echo "Loading Proxy settings"
+    echo 'Loading Proxy settings'
     . /etc/profile.d/proxy.sh
   fi
 
   exec >> /var/log/prometheus.log
   exec 2>&1
-  exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :81 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://alertmanager.service.consul:9093/alertmanager -web.external-url "http://mon.$(nubis-metadata NUBIS_ENVIRONMENT).$(nubis-region).$(nubis-metadata NUBIS_ACCOUNT).$(nubis-metadata NUBIS_DOMAIN)/prometheus"
-',
+  exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :81 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://${prometheus_project}-alertmanager.service.consul:9093/alertmanager -web.external-url \"https://mon.\$(nubis-metadata NUBIS_ENVIRONMENT).\$(nubis-region).\$(nubis-metadata NUBIS_ACCOUNT).\$(nubis-metadata NUBIS_DOMAIN)/prometheus\"
+",
     pre_start      => '
   if [ "$BACKUP" != "SKIP" ]; then
     if [ -r /var/lib/prometheus/PRISTINE ]; then

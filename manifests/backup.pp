@@ -32,7 +32,7 @@ cron::hourly { 'prometheus-backup':
     minute  => fqdn_rand(60),
     user    => 'root',
     # Add a 15 minute jitter to the backup job
-    command => "sleep $(( RANDOM \% 60*15 )) && nubis-cron ${project}-prometheus-backup /usr/local/bin/nubis-prometheus-backup save",
+    command => "sleep $(( RANDOM \% ( 60*15 ) )) && nubis-cron ${prometheus_project}-prometheus-backup /usr/local/bin/nubis-prometheus-backup save",
     environment => [
       'SHELL=/bin/bash',
     ],
@@ -44,7 +44,7 @@ cron::daily { 'prometheus-backup-cleanup':
     # Run between midnight and 4 am
     hour    => fqdn_rand(4),
     user    => 'root',
-    command => "nubis-cron ${project}-prometheus-backup-cleanup /usr/local/bin/nubis-prometheus-backup purge",
+    command => "nubis-cron ${prometheus_project}-prometheus-backup-cleanup /usr/local/bin/nubis-prometheus-backup purge",
 }
 
 # Duplicity and Duply

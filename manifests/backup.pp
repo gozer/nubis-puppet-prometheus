@@ -81,11 +81,14 @@ file { '/etc/lighttpd/lighttpd.conf':
 }
 
 file { '/var/www/index.html':
-  ensure  => 'file',
+  ensure  => file,
   owner   => 'root',
   group   => 'root',
   mode    => '0644',
   content => 'Backups in progress...',
+  require => [
+    Package['lighttpd'],
+  ],
 }
 
 package { 'duplicity':

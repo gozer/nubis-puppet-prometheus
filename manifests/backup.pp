@@ -1,7 +1,8 @@
 class nubis_prometheus::backup($project,
   $duplicity_version = '0.7.11-0ubuntu0ppa1263~ubuntu14.04.1',
   $duply_version = '2.0.1',
-  $boto_version  = 'latest',
+  $boto_version  = '2.20.1-2ubuntu2',
+  $lighttpd_version = '1.4.33-1+nmu2ubuntu2'
 
   $max_age = '3M',
   $max_full_age = '1D',
@@ -29,10 +30,10 @@ file { '/var/lib/prometheus/PRISTINE':
 }
 
 cron::hourly { 'prometheus-backup':
-    minute  => fqdn_rand(60),
-    user    => 'root',
+    minute      => fqdn_rand(60),
+    user        => 'root',
     # Add a 15 minute jitter to the backup job
-    command => "sleep $(( RANDOM \% ( 60*15 ) )) && nubis-cron ${prometheus_project}-prometheus-backup /usr/local/bin/nubis-prometheus-backup save",
+    command     => "sleep $(( RANDOM \% ( 60*15 ) )) && nubis-cron ${prometheus_project}-prometheus-backup /usr/local/bin/nubis-prometheus-backup save",
     environment => [
       'SHELL=/bin/bash',
     ],
@@ -54,6 +55,33 @@ apt::ppa {
 
 package { 'python-boto':
   ensure => $boto_version,
+}
+
+package { 'lighttpd':
+  ensure => $lighttpd_version,
+}
+
+service { 'lighttpd':
+  ensure  => false,
+  enable  => false,
+  require => [
+    Package['lighttpd'],
+  ],
+}
+
+file { '/etc/lighttpd/lighttpd.conf':
+  source  => "puppet:///modules/${module_name}/lighttpd.conf",
+  require => [
+    Package['lighttpd'],
+  ],
+}
+
+file { '/var/www/index.html':
+  ensure  => 'present',
+  owner   => 'root',
+  group   => 'root',
+  mode    => '0644',
+  content => 'Backups in progress...',
 }
 
 package { 'duplicity':

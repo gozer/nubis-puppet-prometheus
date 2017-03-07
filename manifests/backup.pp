@@ -71,13 +71,17 @@ service { 'lighttpd':
 
 file { '/etc/lighttpd/lighttpd.conf':
   source  => "puppet:///modules/${module_name}/lighttpd.conf",
+  ensure  => file,
+  owner   => root,
+  group   => root,
+  mode    => '0644',
   require => [
     Package['lighttpd'],
   ],
 }
 
 file { '/var/www/index.html':
-  ensure  => 'present',
+  ensure  => 'file',
   owner   => 'root',
   group   => 'root',
   mode    => '0644',

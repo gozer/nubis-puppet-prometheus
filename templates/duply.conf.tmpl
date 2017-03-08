@@ -1,10 +1,10 @@
 GPG_KEY="disabled"
 {{if exists "/config/BackupBucket"}}
-TARGET="s3://s3-$(nubis-region).amazonaws.com/{{ getv "/config/BackupBucket" }}"
+TARGET="s3+http://{{ getv "/config/BackupBucket" }}"
 {{else}}
 TARGET="file:///tmp/duply-local"
 {{end}}
 SOURCE="/var/lib/prometheus"
 MAX_AGE=<%= @max_age %>
 MAX_FULLBKP_AGE=<%= @max_full_age %>
-DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE "
+DUPL_PARAMS="$DUPL_PARAMS --full-if-older-than $MAX_FULLBKP_AGE --s3-use-new-style "

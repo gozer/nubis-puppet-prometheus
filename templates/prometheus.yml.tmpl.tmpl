@@ -36,6 +36,7 @@ scrape_configs:
     params:
       'match[]':
         - '{job=~"[a-z].*"}'
+        - 'ALERTS'
     static_configs:
       - targets:{{ range $region := jsonArray (getv (print "/config/federate/" $dir "/regions")) }}{{ range $environment := jsonArray (getv (print "/config/federate/" $dir "/environments")) }}
         - 'mon.{{ $environment }}.{{ $region }}.{{ $dir }}.nubis.allizom.org'{{ end }}{{ end }}{{end}}

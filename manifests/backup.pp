@@ -1,6 +1,6 @@
 class nubis_prometheus::backup($project,
-  $duplicity_version = '0.7.12-0ubuntu0ppa1276~ubuntu14.04.1',
-  $duply_version = '2.0.1',
+  $duplicity_version = '0.7.13.1-0ubuntu0ppa1299~ubuntu14.04.1',
+  $duply_version = '2.0.2',
   $boto_version  = '2.20.1-2ubuntu2',
   $lighttpd_version = '1.4.33-1+nmu2ubuntu2',
 

@@ -33,7 +33,7 @@ cron::hourly { 'prometheus-backup':
     minute      => fqdn_rand(60),
     user        => 'root',
     # Add a 15 minute jitter to the backup job
-    command     => "sleep $(( RANDOM \% ( 60*15 ) )) && nubis-cron ${prometheus_project}-prometheus-backup /usr/local/bin/nubis-prometheus-backup save",
+    command     => "sleep $(( RANDOM % ( 60*15 ) )) && nubis-cron ${prometheus_project}-prometheus-backup /usr/local/bin/nubis-prometheus-backup save",
     environment => [
       'SHELL=/bin/bash',
     ],

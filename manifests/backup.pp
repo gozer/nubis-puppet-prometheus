@@ -1,6 +1,6 @@
 class nubis_prometheus::backup($project,
   $duplicity_version = 'latest',
-  $duply_version = 'latest',
+  $duply_version = '2.0.3',
   $boto_version  = 'latest',
   $lighttpd_version = 'latest',
 

@@ -177,7 +177,7 @@ class nubis_prometheus($version = '1.7.1', $blackbox_version = '0.7.0', $tag_nam
 
   exec >> /var/log/prometheus.log
   exec 2>&1
-  exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :81 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://${prometheus_project}-alertmanager.service.consul:9093/alertmanager -web.external-url \"https://mon.\$(nubis-metadata NUBIS_ENVIRONMENT).\$(nubis-region).\$(nubis-metadata NUBIS_ACCOUNT).\$(nubis-metadata NUBIS_DOMAIN)/prometheus\"
+  exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :9090 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://${prometheus_project}-alertmanager.service.consul:9093/alertmanager -web.external-url \"https://mon.\$(nubis-metadata NUBIS_ENVIRONMENT).\$(nubis-region).\$(nubis-metadata NUBIS_ACCOUNT).\$(nubis-metadata NUBIS_DOMAIN)/prometheus\"
 ",
     pre_start      => '
   if [ "$BACKUP" != "SKIP" ]; then

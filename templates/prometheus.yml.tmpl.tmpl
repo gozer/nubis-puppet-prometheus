@@ -23,7 +23,7 @@ scrape_configs:
   - job_name: 'prometheus'
     metrics_path: '/prometheus/metrics'
     static_configs:
-      - targets: ['localhost:81']
+      - targets: ['localhost:9090']
 {{ range $dir := lsdir "/config/federate" }}
   - job_name: 'federate-{{ $dir }}'
     honor_labels: true

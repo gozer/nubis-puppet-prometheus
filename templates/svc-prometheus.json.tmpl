@@ -1,13 +1,9 @@
 {
   "service": {
     "name": "<%= @prometheus_project %>-prometheus",
-    "port": 81,
-    "tags": [
-      "traefik.tags=<%= @tag_name %>",
-      "traefik.frontend.rule=PathPrefix:/prometheus"
-    ],
+    "port": 9090,
     "check": {
-       "http": "http://localhost:81/prometheus/status",
+       "http": "http://localhost:9090/prometheus/status",
        "interval": "10s",
        "timeout": "1s"
     }

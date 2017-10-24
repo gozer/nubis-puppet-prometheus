@@ -30,6 +30,8 @@ scrape_configs:
     metrics_path: '/prometheus/federate'
     scheme: 'https'
     proxy_url: "http://proxy.service.consul:3128"
+    tls_config:
+      insecure_skip_verify: true
     basic_auth:
       username: "federation"
       password: "{{ getv (print "/config/federate/" $dir "/password") }}"

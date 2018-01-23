@@ -2,6 +2,9 @@
   "service": {
     "name": "<%= @prometheus_project %>-prometheus",
     "port": 9090,
+    "tags": [
+        "%%ENVIRONMENT%%"
+    ],
     "check": {
        "http": "http://localhost:9090/prometheus/status",
        "interval": "10s",

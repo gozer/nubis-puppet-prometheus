@@ -42,7 +42,7 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
-class nubis_prometheus($version = '1.7.1', $blackbox_version = '0.7.0', $project=undef, $rules_dir) {
+class nubis_prometheus($version = '1.8.2', $blackbox_version = '0.7.0', $project=undef, $rules_dir) {
 
   if ($project) {
     $prometheus_project = $project

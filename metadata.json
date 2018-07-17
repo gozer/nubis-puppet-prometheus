@@ -8,9 +8,14 @@
   "project_page": "https://github.com/nubisproject/nubis-puppet-prometheus",
   "issues_url": "https://github.com/nubisproject/nubis-puppet-prometheus/issues",
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":">= 1.0.0"},
-    {"name":"spantree/upstart","version_requirement":"0.0.3"}
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "camptocamp/systemd",
+      "version_requirement": ">= 1.x"
+    }
   ],
   "data_provider": null
 }
-

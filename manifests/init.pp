@@ -154,97 +154,23 @@ class nubis_prometheus($version = '1.8.2', $blackbox_version = '0.7.0', $project
     content => template("${module_name}/blackbox.yml.tmpl.tmpl"),
   }
 
-  include 'upstart'
+systemd::unit_file { 'prometheus.service':
+  source => 'puppet:///nubis/files/prometheus.systemd',
+}
+->service { 'prometheus':
+  enable => true,
+}
 
-  upstart::job { 'prometheus':
-    description    => 'Prometheus',
-    service_ensure => 'stopped',
-    # Never give up
-    respawn        => true,
-    respawn_limit  => 'unlimited',
-    start_on       => '(local-filesystems and net-device-up IFACE!=lo)',
-    env            => {
-      'SLEEP_TIME' => 1,
-      'GOMAXPROCS' => 2,
-    },
-    user           => 'root',
-    group          => 'root',
-    script         => "
-  if [ -r /etc/profile.d/proxy.sh ]; then
-    echo 'Loading Proxy settings'
-    . /etc/profile.d/proxy.sh
-  fi
+systemd::unit_file { 'blackbox.service':
+  source => 'puppet:///nubis/files/blackbox.systemd',
+}
+->service { 'blackbox':
+  enable => true,
+}
 
-  exec >> /var/log/prometheus.log
-  exec 2>&1
+
   exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :9090 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://${prometheus_project}-alertmanager.service.consul:9093/alertmanager -web.external-url \"https://mon.\$(nubis-metadata NUBIS_ENVIRONMENT).\$(nubis-region).\$(nubis-metadata NUBIS_ACCOUNT).\$(nubis-metadata NUBIS_DOMAIN)/prometheus\"
 ",
-    pre_start      => '
-  if [ "$BACKUP" != "SKIP" ]; then
-    if [ -r /var/lib/prometheus/PRISTINE ]; then
-      echo "Restoring backup from S3 before startup..."
-      /usr/local/bin/nubis-prometheus-backup restore
-      echo " Done"
-    fi
-  fi
-  initctl unset-env BACKUP
-  unset BACKUP
-',
-    post_stop      => '
-  goal=$(initctl status $UPSTART_JOB | awk \'{print $2}\' | cut -d \'/\' -f 1)
-  # only backup on explicit stop action, not crashes and the like
-  if [ "$goal" = "stop" ]; then
-    if [ "$BACKUP" != "SKIP" ]; then
-      echo -n "Backing up to S3..."
-      /usr/local/bin/nubis-prometheus-backup save
-      echo " Done"
-   fi
-  else
-    echo "Backoff for $SLEEP_TIME seconds"
-    sleep $SLEEP_TIME
-    NEW_SLEEP_TIME=`expr 2 \* $SLEEP_TIME`
-    if [ $NEW_SLEEP_TIME -ge 60 ]; then
-        NEW_SLEEP_TIME=60
-    fi
-    initctl set-env SLEEP_TIME=$NEW_SLEEP_TIME
-  fi
-  initctl unset-env BACKUP
-  unset BACKUP
-',
-  }
-
-  upstart::job { 'blackbox':
-    description    => 'Prometheus Blackbox Exporter',
-    service_ensure => 'stopped',
-    # Never give up
-    respawn        => true,
-    respawn_limit  => 'unlimited',
-    start_on       => '(local-filesystems and net-device-up IFACE!=lo)',
-    env            => {
-      'SLEEP_TIME' => 1,
-      'GOMAXPROCS' => 2,
-    },
-    user           => 'root',
-    group          => 'root',
-    script         => '
-  if [ -r /etc/profile.d/proxy.sh ]; then
-    echo "Loading Proxy settings"
-    . /etc/profile.d/proxy.sh
-  fi
 
   exec /usr/local/bin/blackbox_exporter -config.file /etc/prometheus/blackbox.yml -log.level info -log.format "logger:syslog?appname=blackbox_exporter&local=7"
 ',
-    post_stop      => '
-goal=$(initctl status $UPSTART_JOB | awk \'{print $2}\' | cut -d \'/\' -f 1)
-if [ $goal != "stop" ]; then
-    echo "Backoff for $SLEEP_TIME seconds"
-    sleep $SLEEP_TIME
-    NEW_SLEEP_TIME=`expr 2 \* $SLEEP_TIME`
-    if [ $NEW_SLEEP_TIME -ge 60 ]; then
-        NEW_SLEEP_TIME=60
-    fi
-    initctl set-env SLEEP_TIME=$NEW_SLEEP_TIME
-fi
-',
-  }
-}

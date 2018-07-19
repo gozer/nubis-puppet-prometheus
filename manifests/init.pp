@@ -154,16 +154,17 @@ class nubis_prometheus($version = '1.8.2', $blackbox_version = '0.7.0', $project
     content => template("${module_name}/blackbox.yml.tmpl.tmpl"),
   }
 
-systemd::unit_file { 'prometheus.service':
-  source => 'puppet:///nubis/files/prometheus.systemd',
-}
-->service { 'prometheus':
-  enable => true,
-}
+  systemd::unit_file { 'prometheus.service':
+    source => 'puppet:///nubis/files/prometheus.systemd',
+  }
+  ->service { 'prometheus':
+    enable => true,
+  }
 
-systemd::unit_file { 'blackbox.service':
-  source => 'puppet:///nubis/files/blackbox.systemd',
-}
-->service { 'blackbox':
-  enable => true,
+  systemd::unit_file { 'blackbox.service':
+    source => 'puppet:///nubis/files/blackbox.systemd',
+  }
+  ->service { 'blackbox':
+    enable => true,
+  }
 }

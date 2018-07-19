@@ -3,6 +3,7 @@
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 SKIP=/var/lib/prometheus/.BACKUP_SKIP
+PRISTINE=/var/lib/prometheus/PRISTINE
 
 cleanup() {
   echo "Starting Prometheus"
@@ -60,7 +61,7 @@ restore() {
   run_duply prometheus restore /var/lib/prometheus --force
 
   # Cleanup just to be certain
-  rm -f /var/lib/prometheus/PRISTINE
+  rm -f $PRISTINE
 
   exit 0
 }

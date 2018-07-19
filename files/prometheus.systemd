@@ -10,7 +10,7 @@ LimitNOFILE=65536
 Environment=SYSTEMD_JOB=1
 
 ExecStartPre=-test -r /var/lib/prometheus/PRISTINE && /usr/local/bin/nubis-prometheus-backup restore
-ExecStart=/bin/bash -c '. /etc/profile.d/proxy.sh && /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :9090 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://${prometheus_project}-alertmanager.service.consul:9093/alertmanager -web.external-url "https://mon.$(nubis-metadata NUBIS_ENVIRONMENT).$(nubis-region).$(nubis-metadata NUBIS_ACCOUNT).$(nubis-metadata NUBIS_DOMAIN)/prometheus"'
+ExecStart=/bin/bash -c '. /etc/profile.d/proxy.sh && /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :9090 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://$(nubis-metadata NUBIS_ENVIRONMENT).$(nubis-metadata NUBIS_PROJECT)-alertmanager.service.consul:9093/alertmanager -web.external-url "https://mon.$(nubis-metadata NUBIS_ENVIRONMENT).$(nubis-region).$(nubis-metadata NUBIS_ACCOUNT).$(nubis-metadata NUBIS_DOMAIN)/prometheus"'
 ExecStop=-/usr/local/bin/nubis-prometheus-backup save
 ExecReload=/bin/kill -HUP $MAINPID
 

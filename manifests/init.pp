@@ -167,10 +167,3 @@ systemd::unit_file { 'blackbox.service':
 ->service { 'blackbox':
   enable => true,
 }
-
-
-  exec /opt/prometheus/prometheus -storage.local.retention 336h -storage.local.dirty=true -web.listen-address :9090 -storage.local.path /var/lib/prometheus -config.file /etc/prometheus/config.yml -alertmanager.url http://${prometheus_project}-alertmanager.service.consul:9093/alertmanager -web.external-url \"https://mon.\$(nubis-metadata NUBIS_ENVIRONMENT).\$(nubis-region).\$(nubis-metadata NUBIS_ACCOUNT).\$(nubis-metadata NUBIS_DOMAIN)/prometheus\"
-",
-
-  exec /usr/local/bin/blackbox_exporter -config.file /etc/prometheus/blackbox.yml -log.level info -log.format "logger:syslog?appname=blackbox_exporter&local=7"
-',

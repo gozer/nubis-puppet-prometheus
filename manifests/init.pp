@@ -155,14 +155,14 @@ class nubis_prometheus($version = '1.8.2', $blackbox_version = '0.7.0', $project
   }
 
   systemd::unit_file { 'prometheus.service':
-    source => 'puppet:///nubis/files/prometheus.systemd',
+    source => "puppet://modules/${module_name}/prometheus.systemd",
   }
   ->service { 'prometheus':
     enable => true,
   }
 
   systemd::unit_file { 'blackbox.service':
-    source => 'puppet:///nubis/files/blackbox.systemd',
+    source => "puppet://modules/${module_name}/blackbox.systemd",
   }
   ->service { 'blackbox':
     enable => true,

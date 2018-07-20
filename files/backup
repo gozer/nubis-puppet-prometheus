@@ -16,28 +16,19 @@ cleanup() {
 }
 
 save() {
-  if [ "$SYSTEMD_JOB" == "true" ] && [ -r $SKIP ]; then
-    exit 0
-  fi
-
-  # Ensures we start prometheus no matter what once done
   if [ "$SYSTEMD_JOB" == "" ]; then
+    # Ensures we start prometheus no matter what once done
     trap cleanup EXIT
 
     # Prometheus backs itself up after stopping
     systemctl stop prometheus
 
-    # Prometheus was running, it will call us back once it's done.
-    if [ "$?" == "0" ]; then
-      exit 0
-    fi
+    # We are now stopped so bring up our Backup Running page
+    systemctl start lighttpd
+
+    # Backup
+    run_duply prometheus backup --force --allow-source-mismatch
   fi
-
-  # We are now stopped so bring up our Backup Running page
-  systemctl start lighttpd
-
-  # Backup
-  run_duply prometheus backup --force --allow-source-mismatch
 }
 
 restore() {
@@ -46,6 +37,7 @@ restore() {
   fi
 
   if [ "$SYSTEMD_JOB" == "" ]; then
+    trap cleanup EXIT
     touch $SKIP
     systemctl stop prometheus
     rm -f $SKIP
@@ -62,6 +54,11 @@ restore() {
 
   # Cleanup just to be certain
   rm -f $PRISTINE
+  
+  if [ "$SYSTEMD_JOB" == "true" ]; then
+    # Kill lighttpd
+    systemctl stop lighttpd
+  fi
 
   exit 0
 }
